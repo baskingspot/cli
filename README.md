@@ -1,8 +1,11 @@
-# cli
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/static/logo-dark.svg">
+    <img src="docs/static/logo.svg" alt="cli" height="48">
+  </picture>
+</h1>
 
 A cursor over argv for Zig 0.16: short clusters, long options, and no schema.
-
-This project is incubating. It is unstable, its API will change, and it is not ready to depend on.
 
 The guide is at <https://baskingspot.dev/cli/>.
 
@@ -101,4 +104,11 @@ builds the examples.
 
 ## License
 
-MIT. See `LICENSE`.
+MIT. See `LICENSE`. The logo files in `docs/static/` are baskingspot marks and
+are not covered by it. See `docs/static/LICENSE`.
+
+## How it's made
+
+Built with LLM assistance. [How, in detail](https://github.com/baskingspot/.github/blob/main/docs/AI.md).
+
+<a href="https://github.com/baskingspot"><img src="https://raw.githubusercontent.com/baskingspot/.github/main/brand/assets/badge.svg" alt="baskingspot" height="24"></a>
