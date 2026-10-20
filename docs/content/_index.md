@@ -255,7 +255,7 @@ A writer can fail. The command decides whether to propagate the error, print a s
 
 ```zig
 test "output and source" {
-    var args = cli.Args.fromSlice(&.{ "-o", "out", "src/main.zig" });
+    var args: cli.Args = .fromSlice(&.{ "-o", "out", "src/main.zig" });
     const opts = try parse(std.testing.allocator, &args);
     try std.testing.expectEqualStrings("out", opts.output);
     try std.testing.expectEqual(1, opts.sources.len);
