@@ -11,5 +11,5 @@ zig-pkg/
 docs/themes/
 
 # Build products of `just doc`.
-docs/static/api/
+docs/data/
 docs/content/changelog.md
