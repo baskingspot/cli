@@ -16,7 +16,7 @@ The guide is at <https://baskingspot.dev/cli/>.
 `cli.Args` reads argv one token at a time and never builds an argv slice. On POSIX it allocates nothing. It writes nothing either: help text and error messages belong to the command.
 
 ```zig
-var args = try cli.Args.initAllocator(init.minimal.args, arena);
+var args: cli.Args = try .initAllocator(init.minimal.args, arena);
 defer args.deinit();
 
 while (args.next()) |tok| switch (tok) {
