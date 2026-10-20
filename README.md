@@ -5,7 +5,7 @@
   </picture>
 </h1>
 
-Command-line flags for Zig, the getopt_long way: `-xvf`, `--out=file`, and a `while` loop.
+Command-line flags for Zig, the getopt_long way: -xvf, --out=file, and a while loop.
 
 Every command-line tool ends up with the same loop over argv. Writing it isn't hard. It's tedious, and the edges are where it goes wrong: `-xvf` is three flags, `-ofile` and `-o file` mean the same thing, `--out=file` splits on the first `=`, and after `--` a token that starts with a dash is a path. `cli` handles those edges and hands you one token at a time. Which flags exist, what their values mean, and what the help text says stay in your code, where you can read them.
 
