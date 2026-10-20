@@ -43,10 +43,11 @@ pub fn main(init: std.process.Init) !u8 {
             if (opt.isSwitch("verbose", 'v')) {
                 level = level +| 1;
             } else if (opt.isSwitch("help", null)) {
-                try cli.help(stdout, usage);
+                try stdout.writeAll(usage);
                 return 0;
             } else {
-                try cli.fail(stderr, "verbose", usage, "unknown option '{f}'", .{opt});
+                try stderr.print("verbose: unknown option '{f}'\n", .{opt});
+                try stderr.writeAll(usage);
                 return 2;
             }
         },

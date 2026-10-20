@@ -48,27 +48,32 @@ pub fn main(init: std.process.Init) !u8 {
         .option => |opt| {
             if (opt.isLong("port")) {
                 const raw = args.takeValue(opt) orelse {
-                    try cli.fail(stderr, "codec", usage, "{f} needs a value", .{opt});
+                    try stderr.print("codec: {f} needs a value\n", .{opt});
+                    try stderr.writeAll(usage);
                     return 2;
                 };
                 port = std.fmt.parseInt(u16, raw, 10) catch {
-                    try cli.fail(stderr, "codec", usage, "{f}: expected 0 to 65535, got '{s}'", .{ opt, raw });
+                    try stderr.print("codec: {f}: expected 0 to 65535, got '{s}'\n", .{ opt, raw });
+                    try stderr.writeAll(usage);
                     return 2;
                 };
             } else if (opt.isLong("color")) {
                 const raw = args.takeValue(opt) orelse {
-                    try cli.fail(stderr, "codec", usage, "{f} needs a value", .{opt});
+                    try stderr.print("codec: {f} needs a value\n", .{opt});
+                    try stderr.writeAll(usage);
                     return 2;
                 };
                 color = std.meta.stringToEnum(Color, raw) orelse {
-                    try cli.fail(stderr, "codec", usage, "{f}: expected auto, always, or never, got '{s}'", .{ opt, raw });
+                    try stderr.print("codec: {f}: expected auto, always, or never, got '{s}'\n", .{ opt, raw });
+                    try stderr.writeAll(usage);
                     return 2;
                 };
             } else if (opt.isSwitch("help", null)) {
-                try cli.help(stdout, usage);
+                try stdout.writeAll(usage);
                 return 0;
             } else {
-                try cli.fail(stderr, "codec", usage, "unknown option '{f}'", .{opt});
+                try stderr.print("codec: unknown option '{f}'\n", .{opt});
+                try stderr.writeAll(usage);
                 return 2;
             }
         },

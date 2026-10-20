@@ -55,10 +55,11 @@ pub fn main(init: std.process.Init) !u8 {
             } else if (opt.isSwitch("long", 'l')) {
                 long = true;
             } else if (opt.isSwitch("help", null)) {
-                try cli.help(stdout, usage);
+                try stdout.writeAll(usage);
                 return 0;
             } else {
-                try cli.fail(stderr, "ls", usage, "unknown option '{f}'", .{opt});
+                try stderr.print("ls: unknown option '{f}'\n", .{opt});
+                try stderr.writeAll(usage);
                 return 2;
             }
         },

@@ -214,12 +214,13 @@ fn status(ctx: *Ctx) !u8 {
 }
 
 fn usageError(ctx: *Ctx, usage: []const u8, comptime fmt: []const u8, args: anytype) !u8 {
-    try cli.fail(ctx.stderr, ctx.prog, usage, fmt, args);
+    try ctx.stderr.print("{s}: " ++ fmt ++ "\n", .{ctx.prog} ++ args);
+    try ctx.stderr.writeAll(usage);
     return 2;
 }
 
 fn showHelp(ctx: *Ctx, usage: []const u8) !u8 {
-    try cli.help(ctx.stdout, usage);
+    try ctx.stdout.writeAll(usage);
     return 0;
 }
 
@@ -240,7 +241,8 @@ fn takePositional(ctx: *Ctx, usage: []const u8) !?[]const u8 {
     return switch (tok) {
         .positional => |value| value,
         .option => |opt| {
-            try cli.fail(ctx.stderr, ctx.prog, usage, "unexpected option '{f}'", .{opt});
+            try ctx.stderr.print("{s}: unexpected option '{f}'\n", .{ ctx.prog, opt });
+            try ctx.stderr.writeAll(usage);
             return null;
         },
     };

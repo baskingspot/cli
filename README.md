@@ -6,9 +6,7 @@ This project is incubating. It is unstable, its API will change, and it is not r
 
 ## Shape
 
-`cli.Args` is a cursor over argv. It reads one argument at a time and does not build an argv slice. On POSIX it allocates nothing; the allocator is used only where the platform iterator needs a buffer. It classifies tokens and leaves the meaning to the command. Help text and error messages stay in the command.
-
-The library owns no streams. Diagnostics take a caller-provided `*std.Io.Writer`.
+`cli.Args` is a cursor over argv. It reads one argument at a time and does not build an argv slice. On POSIX it allocates nothing; the allocator is used only where the platform iterator needs a buffer. It classifies tokens and leaves the meaning to the command. The library owns no streams and writes nothing; help text and error messages stay in the command.
 
 ```zig
 var stdout_buffer: [4096]u8 = undefined;
@@ -29,11 +27,13 @@ while (args.next()) |tok| switch (tok) {
     .option => |opt| {
         if (opt.is("output", 'o')) {
             output = args.takeValue(opt) orelse {
-                try cli.fail(stderr, "mytool", usage, "{f} needs a value", .{opt});
+                try stderr.print("mytool: {f} needs a value\n", .{opt});
+                try stderr.writeAll(usage);
                 return 2;
             };
         } else {
-            try cli.fail(stderr, "mytool", usage, "unknown option '{f}'", .{opt});
+            try stderr.print("mytool: unknown option '{f}'\n", .{opt});
+            try stderr.writeAll(usage);
             return 2;
         }
     },
@@ -46,7 +46,8 @@ Subcommands are an enum and a switch. `cli.Args` does not see them.
 
 ```zig
 const cmd = std.meta.stringToEnum(Cmd, name) orelse {
-    try cli.fail(stderr, "mytool", usage, "unknown command '{s}'", .{name});
+    try stderr.print("mytool: unknown command '{s}'\n", .{name});
+    try stderr.writeAll(usage);
     return 2;
 };
 
@@ -68,8 +69,6 @@ return switch (cmd) {
 `takeValue` consumes the rest of a short cluster first, then the next token. The next token is consumed even when it starts with a dash. The command decides whether that is valid.
 
 There is no generated help, no typed flag table, and no value codec. The command writes the help text and calls `std.fmt.parseInt` or `std.meta.stringToEnum` at the flag.
-
-`cli.help` and `cli.fail` write to the writer you pass. They do not flush, allocate, or exit.
 
 ## Examples
 

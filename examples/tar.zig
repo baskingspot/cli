@@ -64,19 +64,22 @@ pub fn main(init: std.process.Init) !u8 {
                 verbose = true;
             } else if (opt.is("file", 'f')) {
                 archive = args.takeValue(opt) orelse {
-                    try cli.fail(stderr, "tar", usage, "{f} needs a value", .{opt});
+                    try stderr.print("tar: {f} needs a value\n", .{opt});
+                    try stderr.writeAll(usage);
                     return 2;
                 };
             } else if (opt.is("directory", 'C')) {
                 directory = args.takeValue(opt) orelse {
-                    try cli.fail(stderr, "tar", usage, "{f} needs a value", .{opt});
+                    try stderr.print("tar: {f} needs a value\n", .{opt});
+                    try stderr.writeAll(usage);
                     return 2;
                 };
             } else if (opt.isSwitch("help", null)) {
-                try cli.help(stdout, usage);
+                try stdout.writeAll(usage);
                 return 0;
             } else {
-                try cli.fail(stderr, "tar", usage, "unknown option '{f}'", .{opt});
+                try stderr.print("tar: unknown option '{f}'\n", .{opt});
+                try stderr.writeAll(usage);
                 return 2;
             }
         },
