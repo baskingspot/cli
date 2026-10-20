@@ -57,7 +57,7 @@ return switch (cmd) {
 ## Install
 
 ```sh
-zig fetch --save https://github.com/baskingspot/cli/archive/refs/tags/v0.1.0.tar.gz
+zig fetch --save https://baskingspot.dev/cli/v0.1.0
 ```
 
 Add the module to your build:
