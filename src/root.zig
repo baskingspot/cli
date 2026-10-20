@@ -1,18 +1,19 @@
-//! By convention, root.zig is the root source file when making a package.
-const std = @import("std");
-const Io = std.Io;
+//! `cli`: command-line argument parsing for Zig.
+//!
+//! The parser is a cursor over argv, not a schema. It classifies tokens into
+//! options and positionals and leaves every semantic decision, including the
+//! help text and the error messages, to the command. The library owns no
+//! streams; diagnostics take a caller-provided `*std.Io.Writer`.
 
-/// This is a documentation comment to explain the `printAnotherMessage` function below.
-///
-/// Accepting an `Io.Writer` instance is a handy way to write reusable code.
-pub fn printAnotherMessage(writer: *Io.Writer) Io.Writer.Error!void {
-    try writer.print("Run `zig build test` to run the tests.\n", .{});
-}
+pub const Args = @import("Args.zig");
+pub const Option = Args.Option;
+pub const Token = Args.Token;
+pub const isOption = Args.isOption;
+const diag = @import("diag.zig");
+pub const fail = diag.fail;
+pub const help = diag.help;
 
-pub fn add(a: i32, b: i32) i32 {
-    return a + b;
-}
-
-test "basic add functionality" {
-    try std.testing.expect(add(3, 7) == 10);
+test {
+    _ = @import("Args.zig");
+    _ = @import("diag.zig");
 }

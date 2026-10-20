@@ -1,4 +1,4 @@
-# cli: Command-line argument parsing and terminal output for Zig. `just --list` shows the recipes.
+# cli: Command-line argument parsing for Zig. `just --list` shows the recipes.
 # AGENTS.md holds the working conventions.
 
 [private]
@@ -7,8 +7,8 @@ default:
 
 [doc("Unit tests")]
 [group("test")]
-test:
-    zig build test --summary all
+test *ARGS:
+    zig build test --summary all -- {{ ARGS }}
 
 [doc("Lint Zig, Nix, Markdown, the workflows, and this justfile: ziglint, zig fmt, nix fmt, oxfmt, actionlint, zizmor, and just --fmt")]
 [group("lint")]
