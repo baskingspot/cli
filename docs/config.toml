@@ -2,7 +2,7 @@
 base_url = "https://baskingspot.dev/cli"
 theme = "baskingspot"
 title = "cli"
-description = "A cursor over argv for Zig 0.16: short clusters, long options, and no schema."
+description = "Command-line flags for Zig, the getopt_long way: -xvf, --out=file, and a while loop."
 
 generate_feeds = false
 build_search_index = false

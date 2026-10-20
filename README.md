@@ -5,25 +5,17 @@
   </picture>
 </h1>
 
-A cursor over argv for Zig 0.16: short clusters, long options, and no schema.
+Command-line flags for Zig, the getopt_long way: `-xvf`, `--out=file`, and a `while` loop.
+
+Every command-line tool ends up with the same loop over argv. Writing it isn't hard. It's tedious, and the edges are where it goes wrong: `-xvf` is three flags, `-ofile` and `-o file` mean the same thing, `--out=file` splits on the first `=`, and after `--` a token that starts with a dash is a path. `cli` handles those edges and hands you one token at a time. Which flags exist, what their values mean, and what the help text says stay in your code, where you can read them.
 
 The guide is at <https://baskingspot.dev/cli/>.
 
 ## Shape
 
-`cli.Args` is a cursor over argv. It reads one argument at a time and does not build an argv slice. On POSIX it allocates nothing; the allocator is used only where the platform iterator needs a buffer. It classifies tokens and leaves the meaning to the command. The library owns no streams and writes nothing; help text and error messages stay in the command.
+`cli.Args` reads argv one token at a time and never builds an argv slice. On POSIX it allocates nothing. It writes nothing either: help text and error messages belong to the command.
 
 ```zig
-var stdout_buffer: [4096]u8 = undefined;
-var stdout_file: std.Io.File.Writer = .initStreaming(.stdout(), init.io, &stdout_buffer);
-const stdout = &stdout_file.interface;
-defer stdout.flush() catch {};
-
-var stderr_buffer: [4096]u8 = undefined;
-var stderr_file: std.Io.File.Writer = .initStreaming(.stderr(), init.io, &stderr_buffer);
-const stderr = &stderr_file.interface;
-defer stderr.flush() catch {};
-
 var args = try cli.Args.initAllocator(init.minimal.args, arena);
 defer args.deinit();
 

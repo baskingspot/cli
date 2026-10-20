@@ -2,9 +2,11 @@
 title = "cli"
 +++
 
-`cli` is a cursor over argv. It classifies tokens into options and positionals, then stops. The command owns the flag names, the values, the help text, the error text, the writers, and the exit codes.
+`cli` parses command-line flags the way getopt_long does, and hands them to a `while` loop you write.
 
-That split is the whole design. There is no schema, no generated help, and no comptime reflection. A command is a loop over the tokens it recognizes.
+The loop is the part every tool writes by hand, and the part nobody wants to write again. `-lah` is three flags. `-ofile`, `-o file`, and `--out=file` all give `out` the same value. After `--`, `-weird-name` is a path. Each rule is easy, and getting all of them right in every new tool is tedious. `cli` gets them right once.
+
+It stops at tokens. `Args.next()` says whether a token is an option or a positional, and the command decides what it means. The command owns the flag names, the values, the help text, the error text, the writers, and the exit codes. In return there is nothing to declare up front: a new flag is one more `if` in the loop.
 
 - [The cursor](#the-cursor): the model and the first loop.
 - [Install](#install): the dependency and the module.
