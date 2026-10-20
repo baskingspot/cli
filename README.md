@@ -4,6 +4,8 @@ Command-line argument parsing for Zig.
 
 This project is incubating. It is unstable, its API will change, and it is not ready to depend on.
 
+The guide is at <https://baskingspot.dev/cli/>.
+
 ## Shape
 
 `cli.Args` is a cursor over argv. It reads one argument at a time and does not build an argv slice. On POSIX it allocates nothing; the allocator is used only where the platform iterator needs a buffer. It classifies tokens and leaves the meaning to the command. The library owns no streams and writes nothing; help text and error messages stay in the command.

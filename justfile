@@ -10,13 +10,28 @@ default:
 test *ARGS:
     zig build test --summary all -- {{ ARGS }}
 
+[doc("Build the site into zig-out/site/cli/: the guide, from docs/")]
+[group("docs")]
+doc:
+    baskingspot-docs build cli
+
+[doc("Edit the guide with live reload (http://127.0.0.1:1111)")]
+[group("docs")]
+guide:
+    baskingspot-docs serve cli
+
+[doc("Deploy the rendered site to Cloudflare as an assets-only Worker (config in wrangler.jsonc). Needs CLOUDFLARE_API_TOKEN in the environment, plus CLOUDFLARE_ACCOUNT_ID if the token can see more than one account")]
+[group("docs")]
+doc-deploy: doc
+    wrangler deploy
+
 [doc("Lint Zig, Nix, Markdown, the workflows, and this justfile: ziglint, zig fmt, nix fmt, oxfmt, actionlint, zizmor, and just --fmt")]
 [group("lint")]
 lint:
     ziglint
     zig fmt --check src build.zig
     nix fmt -- --ci
-    oxfmt --check README.md AGENTS.md .github
+    oxfmt --check README.md AGENTS.md docs/content docs/config.toml wrangler.jsonc .github
     actionlint
     zizmor .
     just --fmt --check
@@ -26,9 +41,9 @@ lint:
 fmt:
     zig fmt src build.zig
     nix fmt
-    oxfmt README.md AGENTS.md .github
+    oxfmt README.md AGENTS.md docs/content docs/config.toml wrangler.jsonc .github
     just --fmt
 
 [doc("Everything CI runs")]
 [group("ci")]
-ci: test lint
+ci: test lint doc

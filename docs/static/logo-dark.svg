@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 404 204">
+<!--! Lockup, 10 svg units per grid unit. The tile is 160 square. The baseline runs along its bottom edge, the ascender (160) along its top edge, and the x-height (100) along the top of the disc. The name starts 60 after the tile. Lettering: Hanken Grotesk 600, re-cut: ascenders at 1.6 x-heights, a flat-topped t, square tittles, hand spacing.-->
+  <path fill="#58616c" d="M0 0h160v160H0z"/>
+  <circle cx="50" cy="110" r="50" fill="#d4412b"/>
+  <path fill="#f4f1ec" d="M268 162c20 0 35-10 42-29l-20-8c-3 10-10 17-22 17s-19-6-23-16c-3-10-3-22 0-32 4-9 11-16 23-16s19 7 22 17l20-8c-7-19-22-29-42-29-32 0-48 25-48 52s16 52 48 52m82 0c4 0 10-1 15-3v-19c-8 2-16 2-16-8V0h-22v137c0 17 10 25 23 25m31-2h22V60h-22Zm0-119h22V19h-22Z"/>
+</svg>

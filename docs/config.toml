@@ -1,0 +1,20 @@
+# The cli guide, at baskingspot.dev/cli/. Built with `just doc`.
+base_url = "https://baskingspot.dev/cli"
+theme = "baskingspot"
+title = "cli"
+description = "A cursor over argv for Zig 0.16: short clusters, long options, and no schema."
+
+generate_feeds = false
+build_search_index = false
+
+[markdown]
+insert_anchor_links = "heading"
+
+[markdown.highlighting]
+# An unknown fence language is a build error, not an unhighlighted block.
+error_on_missing_language = true
+light_theme = "github-light"
+dark_theme = "github-dark"
+
+[extra]
+repo = "baskingspot/cli"
