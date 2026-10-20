@@ -13,6 +13,7 @@ test *ARGS:
 [doc("Build the site into zig-out/site/cli/: the guide, from docs/")]
 [group("docs")]
 doc:
+    zig build docs
     baskingspot-docs build cli
 
 [doc("Edit the guide with live reload (http://127.0.0.1:1111)")]

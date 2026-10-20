@@ -3,4 +3,13 @@
 .zig-cache/
 zig-out/
 zig-pkg/
+
+# Local wrangler state.
+.wrangler/
+
+# The link baskingspot-docs makes to the theme.
 docs/themes/
+
+# Build products of `just doc`.
+docs/static/api/
+docs/content/changelog.md

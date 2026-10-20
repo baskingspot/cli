@@ -4,7 +4,7 @@ Working notes for AI coding agents in baskingspot/cli.
 
 ## What this is
 
-Command-line argument parsing for Zig. It is incubating: unstable, with no promises about its API.
+Command-line argument parsing for Zig. The API is not yet tagged.
 
 ## Environment
 

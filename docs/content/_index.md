@@ -21,6 +21,8 @@ That split is the whole design. There is no schema, no generated help, and no co
 - [Examples](#examples): the kitchen sink and the focused programs.
 - [API](#api): the public surface.
 
+The [API reference](api/) documents every symbol.
+
 # The cursor
 
 `Args.next()` returns `?Token`. A token is either `.positional` or `.option`. An option carries its kind, its name without dashes, the inline value from `--name=value`, the rest of a short cluster in `attached`, and the original text for diagnostics.
@@ -58,7 +60,7 @@ The library does not allocate an argv slice. `Args.init` and `Args.initAllocator
 zig fetch --save git+https://github.com/baskingspot/cli
 ```
 
-The project is incubating. There is no tagged release yet; `zig fetch` writes a hash, and you should keep it pinned. The first release replaces this line with the tag archive.
+There is no tagged release yet. `zig fetch` writes a hash, and you should keep it pinned. The first release replaces this line with the tag archive.
 
 Add the module in `build.zig`:
 
@@ -346,7 +348,6 @@ try stdout.writeAll(switch (cmd) {
 - No `rest()` slice. The source can be an iterator; the command collects the remainder.
 - No shell parsing. The shell already split the tokens.
 - `Args.init` is not available on Windows or WASI. Use `initAllocator`.
-- The API is incubating and will change.
 
 # Examples
 
