@@ -29,6 +29,8 @@ refactors do not need one unless they change how someone uses the package.
 Write from the user's side: what changed, and what they must do about it. Name
 the symbol, flag, or error. One line, under Added, Changed, Fixed, or Removed.
 
-To release, dispatch the repo's `release.yml` with the version. The workflow
-moves the Unreleased section into a dated heading, sets `.version` in
-`build.zig.zon`, commits, tags, and opens the GitHub release. Do not tag by hand.
+To release, commit the preparation yourself, signed: move the Unreleased
+bullets under a `## [X.Y.Z] - YYYY-MM-DD` heading, and set `.version` in
+`build.zig.zon`. Push, then dispatch `release.yml` with the version. The
+workflow makes no commit. It checks both, tags `main`, and opens the GitHub
+release. Do not tag by hand.

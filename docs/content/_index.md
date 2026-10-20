@@ -58,10 +58,10 @@ The library does not allocate an argv slice. `Args.init` and `Args.initAllocator
 # Install
 
 ```sh
-zig fetch --save git+https://github.com/baskingspot/cli
+zig fetch --save https://github.com/baskingspot/cli/archive/refs/tags/v0.1.0.tar.gz
 ```
 
-There is no tagged release yet. `zig fetch` writes a hash, and you should keep it pinned. The first release replaces this line with the tag archive.
+`zig fetch` writes the hash into `build.zig.zon`. To track `main` instead, fetch `git+https://github.com/baskingspot/cli`.
 
 Add the module in `build.zig`:
 
