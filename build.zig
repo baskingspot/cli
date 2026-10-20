@@ -23,24 +23,17 @@ pub fn build(b: *std.Build) void {
     else
         null;
 
-    const exe = b.addExecutable(.{
-        .name = "cli",
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/main.zig"),
-            .target = target,
-            .optimize = optimize,
-            .imports = &.{.{ .name = "cli", .module = mod }},
-        }),
-    });
-    b.installArtifact(exe);
+    const demo = addExample(b, mod, target, optimize, "git", "cli-git");
+    b.installArtifact(demo);
 
-    const run_cmd = b.addRunArtifact(exe);
+    const run_cmd = b.addRunArtifact(demo);
     if (b.args) |args| run_cmd.addArgs(args);
     run_cmd.step.dependOn(b.getInstallStep());
-    const run_step = b.step("run", "Run the demo");
+    const run_step = b.step("run", "Run the git-shaped demo");
     run_step.dependOn(&run_cmd.step);
 
     const examples_step = b.step("examples", "Build the example programs");
+    examples_step.dependOn(&demo.step);
     const examples = [_]struct { file: []const u8, name: []const u8 }{
         .{ .file = "ls", .name = "cli-ls" },
         .{ .file = "tar", .name = "cli-tar" },
@@ -48,15 +41,7 @@ pub fn build(b: *std.Build) void {
         .{ .file = "codec", .name = "cli-codec" },
     };
     for (examples) |example| {
-        const example_exe = b.addExecutable(.{
-            .name = example.name,
-            .root_module = b.createModule(.{
-                .root_source_file = b.path(b.fmt("examples/{s}.zig", .{example.file})),
-                .target = target,
-                .optimize = optimize,
-                .imports = &.{.{ .name = "cli", .module = mod }},
-            }),
-        });
+        const example_exe = addExample(b, mod, target, optimize, example.file, example.name);
         b.installArtifact(example_exe);
         examples_step.dependOn(&example_exe.step);
     }
@@ -72,4 +57,23 @@ pub fn build(b: *std.Build) void {
     const test_step = b.step("test", "Run tests");
     test_step.dependOn(&run_mod_tests.step);
     test_step.dependOn(examples_step);
+}
+
+fn addExample(
+    b: *std.Build,
+    mod: *std.Build.Module,
+    target: std.Build.ResolvedTarget,
+    optimize: std.builtin.OptimizeMode,
+    file: []const u8,
+    name: []const u8,
+) *std.Build.Step.Compile {
+    return b.addExecutable(.{
+        .name = name,
+        .root_module = b.createModule(.{
+            .root_source_file = b.path(b.fmt("examples/{s}.zig", .{file})),
+            .target = target,
+            .optimize = optimize,
+            .imports = &.{.{ .name = "cli", .module = mod }},
+        }),
+    });
 }

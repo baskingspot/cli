@@ -166,7 +166,9 @@ fn commit(ctx: *Ctx) !u8 {
     var quiet = false;
 
     while (ctx.args.next()) |tok| switch (tok) {
-        .positional => |value| return usageError(ctx, commit_usage, "unexpected argument '{s}'", .{value}),
+        .positional => |value| {
+            return usageError(ctx, commit_usage, "unexpected argument '{s}'", .{value});
+        },
         .option => |opt| {
             if (opt.is("message", 'm')) {
                 message = ctx.args.takeValue(opt) orelse
@@ -186,7 +188,9 @@ fn commit(ctx: *Ctx) !u8 {
     const msg = message orelse
         return usageError(ctx, commit_usage, "--message is required", .{});
 
-    if (!quiet) try ctx.stdout.print("committing: {s}{s}\n", .{ msg, if (amend) " (amend)" else "" });
+    if (!quiet) {
+        try ctx.stdout.print("committing: {s}{s}\n", .{ msg, if (amend) " (amend)" else "" });
+    }
     return 0;
 }
 
@@ -195,7 +199,9 @@ fn status(ctx: *Ctx) !u8 {
     var branch = false;
 
     while (ctx.args.next()) |tok| switch (tok) {
-        .positional => |value| return usageError(ctx, status_usage, "unexpected argument '{s}'", .{value}),
+        .positional => |value| {
+            return usageError(ctx, status_usage, "unexpected argument '{s}'", .{value});
+        },
         .option => |opt| {
             if (opt.isSwitch("short", 's')) {
                 short = true;
@@ -256,7 +262,5 @@ fn extraArgument(ctx: *Ctx, tok: cli.Token, usage: []const u8) !u8 {
 }
 
 fn flushQuietly(writer: *Io.Writer) void {
-    writer.flush() catch |err| {
-        std.debug.print("cli: flush failed: {s}\n", .{@errorName(err)});
-    };
+    writer.flush() catch return;
 }

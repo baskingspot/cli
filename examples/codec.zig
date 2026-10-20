@@ -64,7 +64,10 @@ pub fn main(init: std.process.Init) !u8 {
                     return 2;
                 };
                 color = std.meta.stringToEnum(Color, raw) orelse {
-                    try stderr.print("codec: {f}: expected auto, always, or never, got '{s}'\n", .{ opt, raw });
+                    try stderr.print(
+                        "codec: {f}: expected auto, always, or never, got '{s}'\n",
+                        .{ opt, raw },
+                    );
                     try stderr.writeAll(usage);
                     return 2;
                 };

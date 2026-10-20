@@ -72,13 +72,14 @@ There is no generated help, no typed flag table, and no value codec. The command
 
 ## Examples
 
-- `src/main.zig`: nested subcommands, fixed arity, flags with values.
+- `examples/git.zig`: nested subcommands, fixed arity, flags with values.
 - `examples/ls.zig`: short clusters and `--`.
 - `examples/tar.zig`: clusters where a flag takes the rest of the token or the next token.
 - `examples/verbose.zig`: `-vvvv` as a repeatable counter.
 - `examples/codec.zig`: `--port` parsed as an integer and `--color` parsed as an enum.
 
-`zig build` installs `cli`, `cli-ls`, `cli-tar`, `cli-verbose`, and `cli-codec` under `zig-out/bin`.
+`zig build` installs `cli-git`, `cli-ls`, `cli-tar`, `cli-verbose`, and `cli-codec` under `zig-out/bin`.
+`zig build run -- remote add origin URL` runs the git-shaped demo.
 `zig build test` runs the unit tests and builds the examples.
 
 ## Work on it
