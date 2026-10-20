@@ -62,6 +62,21 @@ return switch (cmd) {
 };
 ```
 
+## Install
+
+```sh
+zig fetch --save git+https://github.com/baskingspot/cli
+```
+
+Add the module to your build:
+
+```zig
+const cli = b.dependency("cli", .{ .target = target, .optimize = optimize });
+exe.root_module.addImport("cli", cli.module("cli"));
+```
+
+`cli` builds with Zig 0.16 only.
+
 ## Grammar
 
 - `--name` and `--name=value`.
