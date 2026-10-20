@@ -1,6 +1,6 @@
 # cli
 
-Command-line argument parsing for Zig.
+A cursor over argv for Zig 0.16: short clusters, long options, and no schema.
 
 This project is incubating. It is unstable, its API will change, and it is not ready to depend on.
 
