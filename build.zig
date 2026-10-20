@@ -60,33 +60,17 @@ pub fn build(b: *std.Build) void {
     test_step.dependOn(&run_mod_tests.step);
     test_step.dependOn(examples_step);
 
-    // docgen reads the source and writes the model; the site theme renders it.
-    // Lazy because only the docs step needs it: when it is not fetched yet,
-    // `lazyDependency` returns null, the build runner fetches it, and this
-    // script runs again.
-    const docgen_dep = b.lazyDependency("docgen", .{
-        .target = target,
-        .optimize = optimize,
-        .exe = true,
-    }) orelse return;
-    const docgen = docgen_dep.artifact("docgen");
-    const docs_run = b.addRunArtifact(docgen);
-    docs_run.addArgs(&.{
-        "--root",     "src/root.zig",
-        "--title",    "cli",
-        "--repo-url", "https://github.com/baskingspot/cli",
-        "--rev",      "main",
-        "--format",   "json",
-        "--out",
+    const mod_docs = b.addObject(.{
+        .name = "cli",
+        .root_module = mod,
     });
-    const api = docs_run.addOutputDirectoryArg("api");
-    // Zola reads the site's data/ directory, so the model installs there.
+    // Zola copies docs/static as is, so the reference installs there.
     const docs_install = b.addInstallDirectory(.{
-        .source_dir = api,
-        .install_dir = .{ .custom = "../docs/data" },
+        .source_dir = mod_docs.getEmittedDocs(),
+        .install_dir = .{ .custom = "../docs/static/api" },
         .install_subdir = "",
     });
-    const docs_step = b.step("docs", "Generate the API JSON into docs/data");
+    const docs_step = b.step("docs", "Generate API docs into docs/static/api");
     docs_step.dependOn(&docs_install.step);
 }
 
