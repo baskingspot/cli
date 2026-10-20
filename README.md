@@ -72,15 +72,26 @@ There is no generated help, no typed flag table, and no value codec. The command
 
 ## Examples
 
+- `examples/kitchen.zig`: the kitchen sink. Global flags, short clusters,
+  repeated values, codecs, `--`, and nested commands.
 - `examples/git.zig`: nested subcommands, fixed arity, flags with values.
 - `examples/ls.zig`: short clusters and `--`.
 - `examples/tar.zig`: clusters where a flag takes the rest of the token or the next token.
 - `examples/verbose.zig`: `-vvvv` as a repeatable counter.
 - `examples/codec.zig`: `--port` parsed as an integer and `--color` parsed as an enum.
 
-`zig build` installs `cli-git`, `cli-ls`, `cli-tar`, `cli-verbose`, and `cli-codec` under `zig-out/bin`.
-`zig build run -- remote add origin URL` runs the git-shaped demo.
-`zig build test` runs the unit tests and builds the examples.
+`zig build` installs `cli-kitchen`, `cli-git`, `cli-ls`, `cli-tar`, `cli-verbose`,
+and `cli-codec` under `zig-out/bin`.
+
+```sh
+zig build run -- -vv build -rj4 -o app --feature serde src/main.zig
+zig build run -- run -- ls -lah
+zig build run -- config set color always
+zig build run -- build -- -weird-source
+```
+
+`zig build run` runs the kitchen sink. `zig build test` runs the unit tests and
+builds the examples.
 
 ## Work on it
 

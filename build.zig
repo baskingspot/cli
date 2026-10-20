@@ -23,18 +23,19 @@ pub fn build(b: *std.Build) void {
     else
         null;
 
-    const demo = addExample(b, mod, target, optimize, "git", "cli-git");
-    b.installArtifact(demo);
+    const kitchen = addExample(b, mod, target, optimize, "kitchen", "cli-kitchen");
+    b.installArtifact(kitchen);
 
-    const run_cmd = b.addRunArtifact(demo);
+    const run_cmd = b.addRunArtifact(kitchen);
     if (b.args) |args| run_cmd.addArgs(args);
     run_cmd.step.dependOn(b.getInstallStep());
-    const run_step = b.step("run", "Run the git-shaped demo");
+    const run_step = b.step("run", "Run the kitchen-sink demo");
     run_step.dependOn(&run_cmd.step);
 
     const examples_step = b.step("examples", "Build the example programs");
-    examples_step.dependOn(&demo.step);
+    examples_step.dependOn(&kitchen.step);
     const examples = [_]struct { file: []const u8, name: []const u8 }{
+        .{ .file = "git", .name = "cli-git" },
         .{ .file = "ls", .name = "cli-ls" },
         .{ .file = "tar", .name = "cli-tar" },
         .{ .file = "verbose", .name = "cli-verbose" },
