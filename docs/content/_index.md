@@ -19,7 +19,6 @@ That split is the whole design. There is no schema, no generated help, and no co
 - [Patterns](#patterns): fixed arity, repeated flags, counters, passthrough.
 - [What it does not do](#what-it-does-not-do): the limits, stated.
 - [Examples](#examples): the kitchen sink and the focused programs.
-- [API](#api): the public surface.
 
 The [API reference](api/) documents every symbol.
 
@@ -367,25 +366,3 @@ The smaller programs each isolate one part:
 - [`examples/tar.zig`](https://github.com/baskingspot/cli/blob/main/examples/tar.zig): clusters where a flag takes the rest of the token or the next token.
 - [`examples/verbose.zig`](https://github.com/baskingspot/cli/blob/main/examples/verbose.zig): `-vvvv` as a counter.
 - [`examples/codec.zig`](https://github.com/baskingspot/cli/blob/main/examples/codec.zig): an integer and an enum parsed at the flag.
-
-# API
-
-| Symbol                         | What it does                                                                                 |
-| ------------------------------ | -------------------------------------------------------------------------------------------- |
-| `Args.init(raw)`               | POSIX cursor over `std.process.Args`. No allocator, no error union. Captures `program_name`. |
-| `Args.initAllocator(raw, gpa)` | Portable cursor. Allocates only where the platform iterator needs a buffer.                  |
-| `Args.fromSlice(tokens)`       | Cursor over literal tokens, for tests and embedding.                                         |
-| `Args.deinit()`                | Release the process iterator. Tokens are invalid afterwards.                                 |
-| `Args.next()`                  | The next `Token`, or null.                                                                   |
-| `Args.takeValue(opt)`          | Inline value, then the short cluster tail, then the next raw token.                          |
-| `Args.nextRaw()`               | The next raw argv token, without classification.                                             |
-| `Args.peekRaw()`               | The next raw argv token, without consuming it.                                               |
-| `Args.program_name`            | The captured first argv token. Empty for a slice cursor.                                     |
-| `Token`                        | `.positional: []const u8` or `.option: Option`.                                              |
-| `Option`                       | `kind`, `name`, `inline_value`, `attached`, `text`.                                          |
-| `Option.is(long, short)`       | Match either form.                                                                           |
-| `Option.isLong(name)`          | Match a long option.                                                                         |
-| `Option.isShort(char)`         | Match a short option.                                                                        |
-| `Option.isSwitch(long, short)` | Match a switch; rejects a long inline value.                                                 |
-| `Option.format`                | `{f}` diagnostic spelling.                                                                   |
-| `isOption(token)`              | True when a raw token starts option syntax.                                                  |
