@@ -9,20 +9,58 @@ The loop is the part every tool writes by hand, and the part nobody wants to wri
 It stops at tokens. `Args.next()` says whether a token is an option or a positional, and the command decides what it means. The command owns the flag names, the values, the help text, the error text, the writers, and the exit codes. In return there is nothing to declare up front: a new flag is one more `if` in the loop.
 
 - [The cursor](#the-cursor): the model and the first loop.
-- [Install](#install): the dependency and the module.
 - [Grammar](#grammar): the forms the cursor accepts.
 - [Short clusters](#short-clusters): `-lah`, `-vvvv`, and values inside a cluster.
 - [The separator](#the-separator): what `--` does.
 - [Subcommands](#subcommands): an enum, a switch, and a cursor that moves down.
 - [Values](#values): strings at the boundary, typed values at the flag.
 - [Help and errors](#help-and-errors): the command writes both.
-- [I/O](#input-and-output): the caller owns the writers.
+- [Input and output](#input-and-output): the caller owns the writers.
 - [Tests](#tests): `fromSlice` and a parse function.
 - [Patterns](#patterns): fixed arity, repeated flags, counters, passthrough.
-- [What it does not do](#what-it-does-not-do): the limits, stated.
-- [Examples](#examples): the kitchen sink and the focused programs.
+- [Limits](#limits): what the library leaves to the command.
 
 The [API reference](api/) documents every symbol.
+
+# Getting started
+
+## Install
+
+```sh
+zig fetch --save https://baskingspot.dev/cli/v0.1.0.tar.gz
+```
+
+`zig fetch` writes the hash into `build.zig.zon`.
+
+Add the module in `build.zig`:
+
+```zig
+const cli_dep = b.dependency("cli", .{ .target = target });
+exe.root_module.addImport("cli", cli_dep.module("cli"));
+```
+
+`cli` builds with Zig 0.16 only.
+
+## Read the examples
+
+[`examples/kitchen.zig`](https://github.com/baskingspot/cli/blob/main/examples/kitchen.zig) is the kitchen sink. It has global flags, `-vvvv`, `-rj4`, repeated `--feature`, integer and enum codecs, `--` for sources and child arguments, nested `config` dispatch, and a help table.
+
+```sh
+zig build run -- -vv build -rj4 -o app --feature serde src/main.zig
+zig build run -- run -- ls -lah
+zig build run -- config set color always
+zig build run -- build -- -weird-source
+```
+
+The smaller programs each isolate one part:
+
+- [`examples/git.zig`](https://github.com/baskingspot/cli/blob/main/examples/git.zig): nested subcommands, fixed arity, flags with values.
+- [`examples/ls.zig`](https://github.com/baskingspot/cli/blob/main/examples/ls.zig): short clusters and `--`.
+- [`examples/tar.zig`](https://github.com/baskingspot/cli/blob/main/examples/tar.zig): clusters where a flag takes the rest of the token or the next token.
+- [`examples/verbose.zig`](https://github.com/baskingspot/cli/blob/main/examples/verbose.zig): `-vvvv` as a counter.
+- [`examples/codec.zig`](https://github.com/baskingspot/cli/blob/main/examples/codec.zig): an integer and an enum parsed at the flag.
+
+`zig build` installs `cli-kitchen`, `cli-git`, `cli-ls`, `cli-tar`, `cli-verbose`, and `cli-codec` under `zig-out/bin`. `zig build run` runs the kitchen sink. `zig build test` runs the unit tests and builds the examples.
 
 # The cursor
 
@@ -54,23 +92,6 @@ while (args.next()) |tok| switch (tok) {
 `takeValue` returns the inline value, then the rest of a short cluster, then the next token. It returns null when the option is last and no token follows. A boolean option must not call it; the cursor then keeps yielding the rest of the cluster.
 
 The library does not allocate an argv slice. `Args.init` and `Args.initAllocator` read the process iterator directly. `fromSlice` reads a literal token slice for tests. There is no hidden allocation in the parser.
-
-# Install
-
-```sh
-zig fetch --save https://baskingspot.dev/cli/v0.1.0.tar.gz
-```
-
-`zig fetch` writes the hash into `build.zig.zon`. To track `main` instead, fetch `git+https://github.com/baskingspot/cli`.
-
-Add the module in `build.zig`:
-
-```zig
-const cli_dep = b.dependency("cli", .{ .target = target });
-exe.root_module.addImport("cli", cli_dep.module("cli"));
-```
-
-`cli` builds with Zig 0.16 only.
 
 # Grammar
 
@@ -337,7 +358,7 @@ try stdout.writeAll(switch (cmd) {
 });
 ```
 
-# What it does not do
+# Limits
 
 - No generated help, man pages, or shell completions.
 - No typed flag schema, derive, or comptime reflection.
@@ -349,22 +370,3 @@ try stdout.writeAll(switch (cmd) {
 - No `rest()` slice. The source can be an iterator; the command collects the remainder.
 - No shell parsing. The shell already split the tokens.
 - `Args.init` is not available on Windows or WASI. Use `initAllocator`.
-
-# Examples
-
-[`examples/kitchen.zig`](https://github.com/baskingspot/cli/blob/main/examples/kitchen.zig) is the kitchen sink. It has global flags, `-vvvv`, `-rj4`, repeated `--feature`, integer and enum codecs, `--` for sources and child arguments, nested `config` dispatch, and a help table.
-
-```sh
-zig build run -- -vv build -rj4 -o app --feature serde src/main.zig
-zig build run -- run -- ls -lah
-zig build run -- config set color always
-zig build run -- build -- -weird-source
-```
-
-The smaller programs each isolate one part:
-
-- [`examples/git.zig`](https://github.com/baskingspot/cli/blob/main/examples/git.zig): nested subcommands, fixed arity, flags with values.
-- [`examples/ls.zig`](https://github.com/baskingspot/cli/blob/main/examples/ls.zig): short clusters and `--`.
-- [`examples/tar.zig`](https://github.com/baskingspot/cli/blob/main/examples/tar.zig): clusters where a flag takes the rest of the token or the next token.
-- [`examples/verbose.zig`](https://github.com/baskingspot/cli/blob/main/examples/verbose.zig): `-vvvv` as a counter.
-- [`examples/codec.zig`](https://github.com/baskingspot/cli/blob/main/examples/codec.zig): an integer and an enum parsed at the flag.
