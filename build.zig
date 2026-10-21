@@ -59,19 +59,6 @@ pub fn build(b: *std.Build) void {
     const test_step = b.step("test", "Run tests");
     test_step.dependOn(&run_mod_tests.step);
     test_step.dependOn(examples_step);
-
-    const mod_docs = b.addObject(.{
-        .name = "cli",
-        .root_module = mod,
-    });
-    // Zola copies docs/static as is, so the reference installs there.
-    const docs_install = b.addInstallDirectory(.{
-        .source_dir = mod_docs.getEmittedDocs(),
-        .install_dir = .{ .custom = "../docs/static/api" },
-        .install_subdir = "",
-    });
-    const docs_step = b.step("docs", "Generate API docs into docs/static/api");
-    docs_step.dependOn(&docs_install.step);
 }
 
 fn addExample(

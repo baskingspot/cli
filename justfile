@@ -10,15 +10,18 @@ default:
 test *ARGS:
     zig build test --summary all -- {{ ARGS }}
 
-[doc("Build the site into zig-out/site/cli/: the guide, from docs/")]
+[private]
+api:
+    docgen --root src/root.zig --title cli --repo-url https://github.com/baskingspot/cli --rev main --format json --out docs/data
+
+[doc("Build the site into zig-out/site/cli/: docgen JSON rendered by the theme's api.html")]
 [group("docs")]
-doc:
-    zig build docs
+doc: api
     baskingspot-docs build cli
 
 [doc("Edit the guide with live reload (http://127.0.0.1:1111)")]
 [group("docs")]
-guide:
+guide: api
     baskingspot-docs serve cli
 
 [doc("Deploy the rendered site to Cloudflare as an assets-only Worker (config in wrangler.jsonc). Needs CLOUDFLARE_API_TOKEN in the environment, plus CLOUDFLARE_ACCOUNT_ID if the token can see more than one account")]
