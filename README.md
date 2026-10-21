@@ -39,7 +39,6 @@ Not implemented:
 - Generated help, man pages, and shell completions: the command writes its own help text.
 - A typed flag table or derive: a new flag is one more `if` in the loop.
 - Long-option abbreviations, `--no-` negation, and a special `-n=value` form.
-- Windows and WASI for `Args.init`: use `Args.initAllocator`.
 
 ## Install
 
