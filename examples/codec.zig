@@ -1,12 +1,12 @@
-//! Value codecs stay in the command. The cursor hands over a string, and
-//! `std.fmt.parseInt` or `std.meta.stringToEnum` turns it into a typed value.
+//! `cli.parse` turns the flag text into a value. The command still writes the
+//! message, because it knows the flag and the usage.
 //!
 //!   cli-codec --port 8080 --color always file.txt
 //!   cli-codec --port nope
 //!   cli-codec --color sometimes
 //!
-//! The error text names the flag and the bad value because the command owns
-//! both. The library only knows that `--port` carried a value.
+//! The error text names the flag and the bad value. The codec only reports
+//! that the text was not a valid u16 or Color.
 
 const std = @import("std");
 const Io = std.Io;
@@ -52,7 +52,7 @@ pub fn main(init: std.process.Init) !u8 {
                     try stderr.writeAll(usage);
                     return 2;
                 };
-                port = std.fmt.parseInt(u16, raw, 10) catch {
+                port = cli.parse(u16, raw) catch {
                     try stderr.print("codec: {f}: expected 0 to 65535, got '{s}'\n", .{ opt, raw });
                     try stderr.writeAll(usage);
                     return 2;
@@ -63,7 +63,7 @@ pub fn main(init: std.process.Init) !u8 {
                     try stderr.writeAll(usage);
                     return 2;
                 };
-                color = std.meta.stringToEnum(Color, raw) orelse {
+                color = cli.parse(Color, raw) catch {
                     try stderr.print(
                         "codec: {f}: expected auto, always, or never, got '{s}'\n",
                         .{ opt, raw },

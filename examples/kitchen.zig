@@ -135,7 +135,7 @@ fn run(ctx: *Ctx) !u8 {
             } else if (opt.is("color", null)) {
                 const raw = ctx.args.takeValue(opt) orelse
                     return usageError(ctx, top_usage, "{f} needs a value", .{opt});
-                ctx.global.color = stringToEnum(Color, raw) orelse
+                ctx.global.color = cli.parse(Color, raw) catch
                     return usageError(
                         ctx,
                         top_usage,
@@ -182,7 +182,7 @@ fn build(ctx: *Ctx) !u8 {
             } else if (opt.is("jobs", 'j')) {
                 const raw = ctx.args.takeValue(opt) orelse
                     return usageError(ctx, build_usage, "{f} needs a value", .{opt});
-                jobs = std.fmt.parseInt(u16, raw, 10) catch
+                jobs = cli.parse(u16, raw) catch
                     return usageError(
                         ctx,
                         build_usage,

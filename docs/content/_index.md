@@ -13,7 +13,7 @@ It stops at tokens. `Args.next()` says whether a token is an option or a positio
 - [Short clusters](#short-clusters): `-lah`, `-vvvv`, and values inside a cluster.
 - [The separator](#the-separator): what `--` does.
 - [Subcommands](#subcommands): an enum, a switch, and a cursor that moves down.
-- [Values](#values): strings at the boundary, typed values at the flag.
+- [Values](#values): strings at the boundary, and `cli.parse` at the flag.
 - [Help and errors](#help-and-errors): the command writes both.
 - [Input and output](#input-and-output): the caller owns the writers.
 - [Tests](#tests): `fromSlice` and a parse function.
@@ -58,7 +58,7 @@ The smaller programs each isolate one part:
 - [`examples/ls.zig`](https://github.com/baskingspot/cli/blob/main/examples/ls.zig): short clusters and `--`.
 - [`examples/tar.zig`](https://github.com/baskingspot/cli/blob/main/examples/tar.zig): clusters where a flag takes the rest of the token or the next token.
 - [`examples/verbose.zig`](https://github.com/baskingspot/cli/blob/main/examples/verbose.zig): `-vvvv` as a counter.
-- [`examples/codec.zig`](https://github.com/baskingspot/cli/blob/main/examples/codec.zig): an integer and an enum parsed at the flag.
+- [`examples/codec.zig`](https://github.com/baskingspot/cli/blob/main/examples/codec.zig): an integer and an enum parsed with `cli.parse`.
 
 `zig build` installs `cli-kitchen`, `cli-git`, `cli-ls`, `cli-tar`, `cli-verbose`, and `cli-codec` under `zig-out/bin`. `zig build run` runs the kitchen sink. `zig build test` runs the unit tests and builds the examples.
 
@@ -187,16 +187,16 @@ Global flags go before the command. Parse them with the same cursor until the fi
 
 # Values
 
-`takeValue` returns a byte slice. Convert it at the flag with std:
+`takeValue` returns a byte slice. `cli.parse(T, raw)` converts it to a value. The command writes the message.
 
 ```zig
-if (opt.isLong("port")) {
+if (opt.is("port", 'p')) {
     const raw = args.takeValue(opt) orelse {
         try stderr.print("mytool: {f} needs a value\n", .{opt});
         try stderr.writeAll(usage);
         return 2;
     };
-    port = std.fmt.parseInt(u16, raw, 10) catch {
+    port = cli.parse(u16, raw) catch {
         try stderr.print("mytool: {f}: expected a number, got '{s}'\n", .{ opt, raw });
         try stderr.writeAll(usage);
         return 2;
@@ -204,19 +204,40 @@ if (opt.isLong("port")) {
 }
 ```
 
-`std.meta.stringToEnum` does the same for an enum:
+The built-in codecs:
+
+- `bool`: the spellings Go's `strconv.ParseBool` accepts: `1`, `t`, `T`, `TRUE`, `true`, `True`, and the false equivalents.
+- Integers (`i8` through `i128`, `u8` through `u128`, `isize`, `usize`): base 10, with an optional sign. A number that does not fit returns `error.Overflow`. Other text returns `error.InvalidValue`.
+- Floats (`f16` through `f128`): the syntax that `std.fmt.parseFloat` accepts.
+- `[]const u8`: the text, borrowed from the argument.
+- An enum: the tag name, matched like `std.meta.stringToEnum`.
+
+A struct, union, or opaque type joins the list with a `parse` function in its namespace:
 
 ```zig
-const Color = enum { auto, always, never };
-...
-color = std.meta.stringToEnum(Color, raw) orelse {
-    try stderr.print("mytool: {f}: expected auto, always, or never, got '{s}'\n", .{ opt, raw });
+const Range = struct {
+    low: u16,
+    high: u16,
+
+    pub fn parse(raw: []const u8) !Range {
+        const dash = std.mem.findScalar(u8, raw, '-') orelse return error.InvalidValue;
+        const low = try std.fmt.parseInt(u16, raw[0..dash], 10);
+        const high = try std.fmt.parseInt(u16, raw[dash + 1 ..], 10);
+        if (low > high) return error.InvalidValue;
+        return .{ .low = low, .high = high };
+    }
+};
+
+range = cli.parse(Range, raw) catch {
+    try stderr.print("mytool: {f}: expected LOW-HIGH, got '{s}'\n", .{ opt, raw });
     try stderr.writeAll(usage);
     return 2;
 };
 ```
 
-The command owns the error because the command knows what the flag means. A generic codec layer would have to own the message and the policy, which is how a parser starts pulling in a schema.
+`parse` receives the text and nothing else. It returns the value or an error. An error reaches the command unchanged. It does not receive the option, and it cannot write.
+
+The command keeps the missing-value branch. `takeValue` returns null when no token follows. `cli.parse` handles only the conversion.
 
 An empty inline value is `""`: `--name=` is present, not missing. Decide whether empty is valid.
 
@@ -361,7 +382,8 @@ try stdout.writeAll(switch (cmd) {
 # Limits
 
 - No generated help, man pages, or shell completions.
-- No typed flag schema, derive, or comptime reflection.
+- No typed flag schema or derive. `cli.parse` converts one value; it does not map flags to fields.
+- No allocator reaches a codec. A custom `parse` borrows its text.
 - No stdio. The caller creates the writers and flushes them.
 - No color, TTY detection, or progress output.
 - No global flag reordering. Global flags come before the command; command flags come after.

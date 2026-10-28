@@ -31,7 +31,7 @@ while (args.next()) |tok| switch (tok) {
 - [Short clusters](https://baskingspot.dev/cli/#short-clusters): `-lah` and `-vvvv`, and a flag that takes the rest of its cluster as a value.
 - [The separator](https://baskingspot.dev/cli/#the-separator): after `--`, every token is positional, even `-weird-name`.
 - [Subcommands](https://baskingspot.dev/cli/#subcommands): an enum and a switch. `cli.Args` does not see them.
-- [Values](https://baskingspot.dev/cli/#values): strings at the boundary, and `std.fmt.parseInt` or `std.meta.stringToEnum` at the flag.
+- [Values](https://baskingspot.dev/cli/#values): strings at the boundary, and `cli.parse` for a primitive or a type's own `parse`.
 - [Help and errors](https://baskingspot.dev/cli/#help-and-errors), [input and output](https://baskingspot.dev/cli/#input-and-output), [tests](https://baskingspot.dev/cli/#tests), and [patterns](https://baskingspot.dev/cli/#patterns): the command writes the help text, the caller owns the writers, `fromSlice` tests a parse function, and fixed arity, repeated flags, and counters are short loops.
 
 Not implemented:

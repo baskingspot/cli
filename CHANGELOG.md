@@ -5,6 +5,10 @@ All notable changes to cli are recorded here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- `cli.parse(T, raw)`: codecs for `bool`, integers, floats, `[]const u8`, and enums, plus any type with a `parse(raw) !T` function.
+
 ## [0.1.0] - 2026-10-20
 
 ### Added
