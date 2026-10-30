@@ -105,7 +105,7 @@ pub fn main(init: std.process.Init) !u8 {
     defer args.deinit();
 
     const prog = if (args.program_name.len > 0)
-        std.Io.Dir.path.basename(args.program_name)
+        Io.Dir.path.basename(args.program_name)
     else
         "kitchen";
 

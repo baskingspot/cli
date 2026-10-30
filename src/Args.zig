@@ -47,13 +47,13 @@ source: Source,
 /// capture it before advancing the iterator. A slice cursor leaves it
 /// empty; set the field directly when the name matters. It is invalid
 /// after `deinit`.
-program_name: []const u8 = "",
+program_name: []const u8,
 /// The raw token that produced the current short-option cluster.
-current: []const u8 = &.{},
+current: []const u8,
 /// The unconsumed short-option bytes in `current`.
-pending: []const u8 = &.{},
-options_done: bool = false,
-peeked: ?[]const u8 = null,
+pending: []const u8,
+options_done: bool,
+peeked: ?[]const u8,
 
 pub const Source = union(enum) {
     process: process.Args.Iterator,
@@ -62,7 +62,13 @@ pub const Source = union(enum) {
 
 pub const Slice = struct {
     tokens: []const []const u8,
-    index: usize = 0,
+    /// The index of the next token to read.
+    index: usize,
+
+    /// Build a slice source over `tokens`, starting at the first one.
+    pub fn init(tokens: []const []const u8) Slice {
+        return .{ .tokens = tokens, .index = 0 };
+    }
 };
 
 /// Build a cursor over the process arguments. The cursor captures the
@@ -76,9 +82,14 @@ pub const Slice = struct {
 /// until `deinit`.
 pub fn init(raw: process.Args) Args {
     var it: process.Args.Iterator = .init(raw);
+    const program_name = it.next() orelse "";
     return .{
-        .program_name = it.next() orelse "",
         .source = .{ .process = it },
+        .program_name = program_name,
+        .current = &.{},
+        .pending = &.{},
+        .options_done = false,
+        .peeked = null,
     };
 }
 
@@ -94,16 +105,28 @@ pub fn init(raw: process.Args) Args {
 /// until `deinit`.
 pub fn initAllocator(raw: process.Args, gpa: Allocator) InitError!Args {
     var it: process.Args.Iterator = try .initAllocator(raw, gpa);
+    const program_name = it.next() orelse "";
     return .{
-        .program_name = it.next() orelse "",
         .source = .{ .process = it },
+        .program_name = program_name,
+        .current = &.{},
+        .pending = &.{},
+        .options_done = false,
+        .peeked = null,
     };
 }
 
 /// Build a cursor over a literal token slice, for tests and embedding.
 /// `program_name` starts empty.
 pub fn fromSlice(tokens: []const []const u8) Args {
-    return .{ .source = .{ .slice = .{ .tokens = tokens } } };
+    return .{
+        .source = .{ .slice = Slice.init(tokens) },
+        .program_name = "",
+        .current = &.{},
+        .pending = &.{},
+        .options_done = false,
+        .peeked = null,
+    };
 }
 
 /// Release the process iterator, if this cursor owns one. A slice cursor

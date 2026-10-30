@@ -5,6 +5,10 @@ All notable changes to cli are recorded here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- `cli.Args` and `cli.Args.Slice` no longer default their fields: build a slice source with `Args.Slice.init(tokens)`; `Args.init`, `Args.initAllocator`, and `Args.fromSlice` are unchanged.
+
 ## [0.2.0] - 2026-10-28
 
 ### Added
