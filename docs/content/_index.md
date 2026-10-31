@@ -27,7 +27,7 @@ The [API reference](api/) documents every symbol.
 ## Install
 
 ```sh
-zig fetch --save https://baskingspot.dev/cli/v0.2.0.tar.gz
+zig fetch --save https://baskingspot.dev/cli/v0.3.0.tar.gz
 ```
 
 `zig fetch` writes the hash into `build.zig.zon`.

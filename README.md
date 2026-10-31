@@ -43,7 +43,7 @@ Not implemented:
 ## Install
 
 ```sh
-zig fetch --save https://baskingspot.dev/cli/v0.2.0.tar.gz
+zig fetch --save https://baskingspot.dev/cli/v0.3.0.tar.gz
 ```
 
 Add the module to your build:
