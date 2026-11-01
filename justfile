@@ -32,7 +32,7 @@ doc-deploy: doc
 [doc("Lint Zig, Nix, Markdown, the workflows, and this justfile: ziglint, the ast-grep rules, zig fmt, nix fmt, oxfmt, actionlint, zizmor, and just --fmt")]
 [group("lint")]
 lint:
-    ziglint
+    ziglint-0-16
     baskingspot-lint src
     zig fmt --check src build.zig
     nix fmt -- --ci
@@ -49,6 +49,10 @@ fmt:
     oxfmt README.md AGENTS.md docs/content docs/config.toml wrangler.jsonc .github
     just --fmt
 
-[doc("Everything CI runs")]
+[doc("The per-version gate: the unit tests and the examples")]
 [group("ci")]
-ci: test lint doc
+check: test
+
+[doc("Everything CI runs: the gate, lint, and the docs build")]
+[group("ci")]
+ci: check lint doc

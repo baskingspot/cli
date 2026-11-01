@@ -55,7 +55,7 @@ exe.root_module.addImport("cli", cli.module("cli"));
 
 `Args.init` is the allocation-free POSIX constructor. `Args.initAllocator` is the portable form for Windows and WASI. Both capture the first argv token as `args.program_name`.
 
-`cli` builds with Zig 0.16 only.
+`cli` builds with Zig 0.16 and 0.17.
 
 ## Documentation
 

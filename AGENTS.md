@@ -8,13 +8,15 @@ Command-line argument parsing for Zig. The API is not yet tagged.
 
 ## Environment
 
-Zig 0.16 only. The flake is the tool contract, from `baskingspot/nix`: `nix develop` provides Zig, `ziglint`, and the base tools, and nothing comes from the system PATH. The justfile is the command interface: `just test`, `just lint`, `just ci`. Run `just fmt` before you commit.
+Zig 0.16 and 0.17. The flake is the tool contract, from `baskingspot/nix`: `nix develop` is the current stable, Zig 0.17, and `nix develop .#zig-old` is Zig 0.16. Both provide `ziglint` and the base tools, and nothing comes from the system PATH. The justfile is the command interface: `just test`, `just check`, `just lint`, `just ci`. CI runs `just ci` on the default shell and `just check` on `zig-old`. Run `just fmt` before you commit.
 
 ## Rules
 
+- Lint with `ziglint-0-16`, not `ziglint`: the wrapper points ziglint at the 0.16 std, so 0.17-only deprecations do not fire while 0.16 is supported.
 - Commit messages are one line, `area: summary`, and every commit is signed. Do not rewrite pushed history.
 - Gate commands on their exit codes, and claim only what you ran.
 - Format with `zig fmt` and lint with `ziglint`. `just fmt` and `just lint` run both.
+- `build.zig`'s `passthruArgs` helper is the only version shim. Keep `b.args` inside it; Zig 0.17 has `Run.addPassthruArgs` instead.
 - This repo's GitHub settings come from `baskingspot/.github`, with `just settings`. Do not change them by hand.
 - To graduate the project, follow the `baskingspot-new-repo` skill: logos, a real README, and the audit passing.
 

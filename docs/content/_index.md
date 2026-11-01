@@ -39,7 +39,7 @@ const cli_dep = b.dependency("cli", .{ .target = target });
 exe.root_module.addImport("cli", cli_dep.module("cli"));
 ```
 
-`cli` builds with Zig 0.16 only.
+`cli` builds with Zig 0.16 and 0.17.
 
 ## Read the examples
 
