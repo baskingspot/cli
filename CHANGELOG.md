@@ -5,6 +5,8 @@ All notable changes to cli are recorded here. The format follows
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-11-02
+
 ### Changed
 
 - `cli` builds with Zig 0.16 and 0.17. `minimum_zig_version` stays `0.16.0`,
