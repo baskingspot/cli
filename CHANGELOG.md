@@ -5,6 +5,11 @@ All notable changes to cli are recorded here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- `cli` requires Zig 0.17: `minimum_zig_version` is `0.17.0`, and Zig 0.16 is
+  no longer supported.
+
 ## [0.3.1] - 2026-11-02
 
 ### Changed

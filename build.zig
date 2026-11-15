@@ -28,7 +28,7 @@ pub fn build(b: *std.Build) void {
     b.installArtifact(kitchen);
 
     const run_cmd = b.addRunArtifact(kitchen);
-    passthruArgs(b, run_cmd);
+    run_cmd.addPassthruArgs();
     run_cmd.step.dependOn(b.getInstallStep());
     const run_step = b.step("run", "Run the kitchen-sink demo");
     run_step.dependOn(&run_cmd.step);
@@ -53,7 +53,7 @@ pub fn build(b: *std.Build) void {
         .test_runner = test_runner,
     });
     const run_mod_tests = b.addRunArtifact(mod_tests);
-    passthruArgs(b, run_mod_tests);
+    run_mod_tests.addPassthruArgs();
 
     const test_step = b.step("test", "Run tests");
     test_step.dependOn(&run_mod_tests.step);
@@ -77,14 +77,4 @@ fn addExample(
             .imports = &.{.{ .name = "cli", .module = mod }},
         }),
     });
-}
-
-/// `b.args` (removed in Zig 0.17) and `Run.addPassthruArgs` are the same
-/// feature on either side of the split. Probe the build API, not the version.
-fn passthruArgs(b: *std.Build, run: *std.Build.Step.Run) void {
-    if (comptime @hasDecl(std.Build.Step.Run, "addPassthruArgs")) {
-        run.addPassthruArgs();
-    } else if (b.args) |args| {
-        run.addArgs(args);
-    }
 }

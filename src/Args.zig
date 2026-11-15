@@ -32,7 +32,6 @@
 //! embedding).
 
 const std = @import("std");
-const compat = @import("compat.zig");
 const mem = std.mem;
 const Allocator = mem.Allocator;
 const process = std.process;
@@ -335,7 +334,7 @@ fn expectOption(args: *Args, kind: Option.Kind, name: []const u8) !Option {
 }
 
 fn expectFormatted(expected: []const u8, opt: Option) !void {
-    const actual = try compat.allocPrint(testing.allocator, "{f}", .{opt});
+    const actual = try testing.allocator.print("{f}", .{opt});
     defer testing.allocator.free(actual);
     try testing.expectEqualStrings(expected, actual);
 }
@@ -549,7 +548,7 @@ test "weird tokens do not panic" {
         .positional => {},
         .option => |opt| {
             var buf: [64]u8 = undefined;
-            _ = compat.bufPrint(&buf, "{f}", .{opt}) catch |err| switch (err) {
+            _ = mem.print(&buf, "{f}", .{opt}) catch |err| switch (err) {
                 error.NoSpaceLeft => unreachable,
             };
         },
